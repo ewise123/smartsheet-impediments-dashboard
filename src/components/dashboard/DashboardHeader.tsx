@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useSession, signOut } from "next-auth/react";
 
 interface DashboardHeaderProps {
   lastUpdated: Date | null;
@@ -13,6 +14,7 @@ export default function DashboardHeader({
   onRefresh,
   isLoading,
 }: DashboardHeaderProps) {
+  const { data: session } = useSession();
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-5">
@@ -85,6 +87,20 @@ export default function DashboardHeader({
         </svg>
         {isLoading ? "Refreshing..." : "Refresh Data"}
       </button>
+        {session?.user && (
+          <>
+            <div className="mx-1 h-6 w-px bg-gray-200" />
+            <span className="text-[13px] font-medium text-brand-blue">
+              {session.user.name ?? session.user.email ?? "User"}
+            </span>
+            <button
+              onClick={() => signOut()}
+              className="rounded-xl border border-gray-200 px-4 py-2.5 text-[13px] font-semibold text-gray-600 transition-all hover:bg-gray-50"
+            >
+              Sign Out
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
